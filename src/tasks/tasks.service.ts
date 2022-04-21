@@ -13,30 +13,11 @@ export class TasksService {
     @InjectRepository(TaskRepository)
     private tasksRepository: TaskRepository,
   ) {}
-  // private tasks: Task[] = [];
-  // getAllTasks(): Task[] {
-  //   return this.tasks;
-  // }
-  // getTaskWithFilter(filterDto: GetTaskFilterDto): Task[] {
-  //   const { status, search } = filterDto;
-  //   //define a temporary array to hold result
-  //   let tasks = this.getAllTasks();
-  //   //something with status
-  //   if (status) {
-  //     tasks = tasks.filter((task) => task.status === status);
-  //   }
-  //   //someting with search
-  //   if (search) {
-  //     tasks = tasks.filter((task) => {
-  //       if (task.title.includes(search) || task.description.includes(search)) {
-  //         return true;
-  //       }
-  //       return false;
-  //     });
-  //   }
-  //   //result to search with filter
-  //   return tasks;
-  // }
+
+  getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
+    //..
+  }
+
   async getTasksById(id: string): Promise<Task> {
     const foundID = await this.tasksRepository.findOne(id);
 
@@ -57,9 +38,14 @@ export class TasksService {
       throw new NotFoundException(`Tasks with id "${id}" not found.`);
     }
   }
-  // updateTaskStatus(id: string, status: TaskStatus): Task {
-  //   const task = this.getTaskById(id);
-  //   task.status = status;
-  //   return task;
-  // }
+
+  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
+    const task = await this.getTasksById(id);
+
+    task.status = status;
+
+    await this.tasksRepository.save(task);
+
+    return task;
+  }
 }
