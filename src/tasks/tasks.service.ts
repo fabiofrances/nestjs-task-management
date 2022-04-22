@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
@@ -15,7 +14,7 @@ export class TasksService {
   ) {}
 
   getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
-    //..
+    return this.tasksRepository.getTasks(filterDto);
   }
 
   async getTasksById(id: string): Promise<Task> {
