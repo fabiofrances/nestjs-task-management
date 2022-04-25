@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { Brackets, EntityRepository, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatus } from './task-status.enum';
@@ -26,13 +26,26 @@ export class TaskRepository extends Repository<Task> {
 
     //send parameters search and status
     if (search && status) {
-      query
-        .where(
-          'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
-          { search: `%${search}%` },
-        )
-        .andWhere('task.status = :status', { status });
+      query.where('task.status = :status', { status }).andWhere(
+        new Brackets((qb) => {
+          qb.where('LOWER(task.title) LIKE LOWER(:status)', {
+            search: `%${search}%`,
+          }).orWhere('LOWER(task.description) LIKE LOWER(:search)', {
+            search: `%${search}%`,
+          });
+        }),
+      );
     }
+
+    // createQueryBuilder("user")
+    // .where("user.registered = :registered", { registered: true })
+    // .andWhere(
+    //     new Brackets((qb) => {
+    //         qb.where("user.firstName = :firstName", {
+    //             firstName: "Timber",
+    //         }).orWhere("user.lastName = :lastName", { lastName: "Saw" })
+    //     }),
+    // )
 
     const task = await query.getMany();
 
