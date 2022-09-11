@@ -1,4 +1,4 @@
-export class AuthCredentialsDTO {
+export class AuthCredentialsDto {
   username: string;
   password: string;
 }
