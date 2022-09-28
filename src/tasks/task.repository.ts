@@ -15,28 +15,34 @@ export class TaskRepository extends Repository<Task> {
 
     //send one parameters
     if (status) {
-      query.where('task.status = :status', { status });
+      query.where('task.status = :status', { status }).andWhere({ user });
     }
 
     //send parameters search and not send status
     if (search && !status) {
-      query.where(
-        'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
-        { search: `%${search}%` },
-      );
+      query
+        .where(
+          '(LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search))',
+          { search: `%${search}%` },
+        )
+        .andWhere({ user });
     }
 
     //send parameters search and status
     if (search && status) {
-      query.where('task.status = :status', { status }).andWhere(
-        new Brackets((qb) => {
-          qb.where('LOWER(task.title) LIKE LOWER(:status)', {
-            search: `%${search}%`,
-          }).orWhere('LOWER(task.description) LIKE LOWER(:search)', {
-            search: `%${search}%`,
-          });
-        }),
-      );
+      query
+        .where('task.status = :status', { status })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('(LOWER(task.title) LIKE LOWER(:status))', {
+              search: `%${search}%`,
+            }).orWhere('(LOWER(task.description) LIKE LOWER(:search))', {
+              search: `%${search}%`,
+            });
+            console.log('query:', qb);
+          }),
+        )
+        .andWhere({ user });
     }
 
     // createQueryBuilder("user")
