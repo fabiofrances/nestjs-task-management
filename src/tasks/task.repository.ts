@@ -39,7 +39,6 @@ export class TaskRepository extends Repository<Task> {
             }).orWhere('(LOWER(task.description) LIKE LOWER(:search))', {
               search: `%${search}%`,
             });
-            console.log('query:', qb);
           }),
         )
         .andWhere({ user });
