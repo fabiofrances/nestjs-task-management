@@ -22,7 +22,7 @@ import { Logger } from '@nestjs/common';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
-  private looger = new Logger('TasksController');
+  private logger = new Logger('TasksController');
   constructor(private tasksService: TasksService) {}
 
   @Get()
@@ -30,7 +30,7 @@ export class TasksController {
     @Query() filterDto: GetTaskFilterDto,
     @GetUser() user: User,
   ): Promise<Task[]> {
-    this.looger.verbose(
+    this.logger.verbose(
       `User "${user.username}" retriving all tasks. Filters: ${JSON.stringify(
         filterDto,
       )}`,
@@ -48,7 +48,7 @@ export class TasksController {
     @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
   ): Promise<Task> {
-    this.looger.verbose(
+    this.logger.verbose(
       `User "${user.username}" create tasks. Data ${JSON.stringify(
         createTaskDto,
       )}`,
@@ -61,7 +61,7 @@ export class TasksController {
     @Param('id') id: string,
     @GetUser() user: User,
   ): Promise<void> {
-    this.looger.verbose(`User "${user.username}" deleting task by id: ${id}`);
+    this.logger.verbose(`User "${user.username}" deleting task by id: ${id}`);
     return this.tasksService.deleteTask(id, user);
   }
 
@@ -71,7 +71,7 @@ export class TasksController {
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
     @GetUser() user: User,
   ): Promise<Task> {
-    this.looger.verbose(
+    this.logger.verbose(
       `User "${
         user.username
       }" update task by id: ${id} with values: ${JSON.stringify(
